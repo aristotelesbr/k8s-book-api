@@ -7,36 +7,44 @@ spec:
     metadata:
       name: setup
     spec:
+      restartPolicy: Never
       containers:
-      - name: setup
-        image: tzumby/rails-app:latest
-        args: ["rake db:create && rake db:migrate"]
+      - args:
+        - bash
+        - -c
+        - rails db:create && rails db:migrate
+        name: setup
+        image: rails-app:latest
+        imagePullPolicy: IfNotPresent
         env:
-        - name: DATABASE_NAME
-          value: "rails-kube-demo_production"
-        - name: DATABASE_URL
-          value: "postgres"
-        - name: DATABASE_PORT
-          value: 5432
-        - name: DATABASE_USER
+        - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: "db-user"
-              key: "username"
-        - name: DATABASE_PASSWORD
+              key: POSTGRES_USER
+              name: env
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "db-user-pass"
-              key: "password"
-        - name: RAILS_APP
-          value: "production"
-        - name: REDIS_URL
-          value: "redis"
-        - name: REDIS_PORT
-          value: "6379"
+              key: POSTGRES_PASSWORD
+              name: env
+        - name: RAILS_ENV
+          valueFrom:
+            secretKeyRef:
+              key: RAILS_ENV
+              name: env
         - name: SECRET_KEY_BASE
           valueFrom:
             secretKeyRef:
-              name: "secret-key-base"
-              key: "secret-key-base"
-      restartPolicy: Never
+              key: SECRET_KEY_BASE
+              name: env
+        - name: POSTGRES_DB
+          valueFrom:
+              secretKeyRef:
+                key: POSTGRES_DB
+                name: env
+        - name: RAILS_LOG_TO_STDOUT
+          valueFrom:
+              secretKeyRef:
+                key: RAILS_LOG_TO_STDOUT
+                name: env
+

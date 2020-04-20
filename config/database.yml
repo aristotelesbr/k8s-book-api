@@ -6,14 +6,10 @@ default: &default
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   host: <%= ENV['POSTGRES_DB'] %>
 
-development:
-  <<: *default
-  database: book_api_development
-
 test:
   <<: *default
   database: book_api_test
 
 production:
   <<: *default
-  database: book_api_production
+  database: <%= ENV['DATABASE_NAME'] %>
