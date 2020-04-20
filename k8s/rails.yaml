@@ -63,3 +63,4 @@ spec:
                 name: env
         ports:
         - containerPort: 3000
+          name: webinterface
